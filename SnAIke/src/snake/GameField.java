@@ -18,6 +18,9 @@ public class GameField extends Canvas{
     private int width;
     private int height;
     
+    private Point snakeHead, snakeTail, food;
+    
+    
     private GameTile[][] buffer;
     
     public int getFieldWidth(){
@@ -142,6 +145,36 @@ public class GameField extends Canvas{
     
     private void drawPixel(int x, int y, Graphics g){
         g.fillRect(x*scale, y*scale, scale, scale);
+    }
+
+    Point getHeadPosition() {
+        return new Point(snakeHead);
+    }
+
+    void setSnakeTail(Point point) {
+        this.snakeTail = point;
+    }
+
+    void setSnakeHead(Point point) {
+        this.snakeHead = point;
+    }
+
+    void setFood(Point point) {
+        food = point;
+        setTile(GameTile.Food, food);
+    }
+
+    Point getTailPosition() {
+        return new Point(snakeTail);
+    }
+
+    void removeFood() {
+        this.resetTile(food);
+        food = null;
+    }
+
+    Point getFoodPosition() {
+        return new Point(food);
     }
     
 }

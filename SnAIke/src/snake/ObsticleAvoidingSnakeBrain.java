@@ -11,11 +11,13 @@ import java.util.ArrayList;
  *
  * @author Jonas
  */
-class SnakeBrain {
+class ObsticleAvoidingSnakeBrain implements BrainInterface{
 
     
-    public Direction decideDirection(GameField field, Point head, Point food){
-        
+    @Override
+    public Direction decideDirection(GameFieldAccessor field){
+        Point head = field.getHeadPosition();
+        Point food = field.getFoodPosition();
         ArrayList<Tuple<Direction,Point>> directions = new ArrayList<Tuple<Direction,Point>>();
         directions.add(new Tuple<Direction,Point>(Direction.left, new Point(head.x-1,head.y)));
         directions.add(new Tuple<Direction,Point>(Direction.right, new Point(head.x+1,head.y)));
@@ -25,7 +27,7 @@ class SnakeBrain {
         ArrayList<Tuple<Direction,Point>> avail = new ArrayList<Tuple<Direction,Point>>();
         //Loop through all directions to see if they are available.
         for (Tuple<Direction,Point> d : directions){
-            if (field.isFood(d.e1)) {
+            if (food.equals(d.e1)) {
                 return d.e0;
             } else if (field.isEmpty(d.e1)) {
                 avail.add(d);

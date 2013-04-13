@@ -14,11 +14,11 @@ import java.util.logging.Logger;
  */
 public class Engine extends Thread {
 
-    private Point snakeHead, snakeTail, food;
+    //private Point snakeHead, snakeTail, food;
     private GameField field;
-    private SnakeBrain brain;
+    private BrainInterface brain;
 
-    public Engine(GameField field, SnakeBrain brain) {
+    public Engine(GameField field, BrainInterface brain) {
         this.field = field;
         this.brain = brain;
         reset();
@@ -29,11 +29,11 @@ public class Engine extends Thread {
         for (int x = 3; x < 7; x++) {
             field.setTile(GameTile.SnakeRight, new Point(x, 4));
         }
-        snakeTail = new Point(3, 4);
-        snakeHead = new Point(7, 4);
+        field.setSnakeTail(new Point(3, 4));
+        field.setSnakeHead(new Point(7, 4));
 
-        food = field.getRandomEmpty();
-        field.setTile(GameTile.Food, food);
+        field.setFood(field.getRandomEmpty());
+        //field.setTile(GameTile.Food, food);
     }
 
     /**
@@ -41,10 +41,11 @@ public class Engine extends Thread {
      * @return true if the snake is still alive 
      */
     public boolean tick() {
-        Direction d = brain.decideDirection(field, snakeHead, food);
+        Direction d = brain.decideDirection(new GameFieldAccessor(field));
         //If we move the snake, we move the tail
         Point newHead;
-
+        Point snakeHead = field.getHeadPosition();
+        Point snakeTail = field.getTailPosition();
         switch (d) {
             case left:
                 field.setTile(GameTile.SnakeLeft, snakeHead);
@@ -84,26 +85,25 @@ public class Engine extends Thread {
                     snakeTail = new Point(snakeTail.x, snakeTail.y + 1);
                     break;
             }
-
+            field.setSnakeTail(snakeTail);
         } else if (!field.isFood(newHead)) {
             return false;
         } else {
             //it must be food!
-            field.resetTile(food);
+            field.removeFood();
 
             Point nfood = field.getRandomEmpty();
             if (nfood == null) {
                 System.out.println("You won!!");
                 return false;
             } else {
-                food = nfood;
-                field.setTile(GameTile.Food, food);
+                field.setFood(nfood);
             }
 
         }
 
-        snakeHead = newHead;
-        field.setTile(GameTile.SnakeDown, snakeHead);
+        field.setSnakeHead(newHead);
+        field.setTile(GameTile.SnakeDown, newHead);
 
 
         return true;

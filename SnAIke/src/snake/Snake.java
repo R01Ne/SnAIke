@@ -17,7 +17,7 @@ public class Snake {
         // TODO code application logic here
         GameField field = new GameField(40,40);
         GameFrame frame = new GameFrame(field);
-        Engine engine = new Engine(field, new SnakeBrain());
+        Engine engine = new Engine(field, new ObsticleAvoidingSnakeBrain());
         
         frame.repaint();
         engine.start();
